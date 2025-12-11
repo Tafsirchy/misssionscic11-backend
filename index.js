@@ -27,6 +27,22 @@ async function run() {
     await client.connect();
     // Send a ping to confirm a successful connection
 
+    // database creation and user info insertion in DB
+    const database = client.db('missionscic11DB')
+    const userCollection = database.collection('users')
+
+    app.post('/users', async(req, res) =>{
+      const userInfo = req.body;
+      userInfo.role = "user";
+      userInfo.createdAt = new Date();
+      const result = await userCollection.insertOne(userInfo);
+
+      res.send(result);
+    })
+
+
+
+
     await client.db("admin").command({ ping: 1 });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
