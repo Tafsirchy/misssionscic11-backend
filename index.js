@@ -30,6 +30,7 @@ async function run() {
     // database creation and user info insertion in DB
     const database = client.db("missionscic11DB");
     const userCollection = database.collection("users");
+    const productCollection = database.collection("product");
 
     app.post("/users", async (req, res) => {
       const userInfo = req.body;
@@ -40,15 +41,32 @@ async function run() {
     });
 
     //get user role by email
-    app.get("/users/role/:email", async(req, res) => {
+    app.get("/users/role/:email", async (req, res) => {
       const email = req.params.email;
       console.log(email);
-      
 
       const query = { email: email };
-      const result = await userCollection.findOne(query)
+      const result = await userCollection.findOne(query);
       console.log(result);
-      
+
+      res.send(result);
+    });
+
+    //add products
+    app.post("/products", async (req, res) => {
+      const data = req.body;
+      data.createdAt = new Date();
+      const result = await productCollection.insertOne(data);
+
+      res.send(result);
+    });
+
+    // manager product
+    app.get("/manager/products/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { managerEmail: email };
+      const result = await productCollection.find(query).toArray();
+
       res.send(result);
     });
 
